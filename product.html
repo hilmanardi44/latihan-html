@@ -1,96 +1,161 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SPARK : PRODUCT</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playpen+Sans&family=DynaPuff:wght@400..700&family=Delius&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QUATTRO BLOOM - Bloom Scrumble Game</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <div class="navbar-container">
-    <div class="navbar-left">
-      <ul class="ul-navbar-container">
-        <li class="li-navbar-brand">SPARK</li>
-      </ul>
-    </div>
-    <div class="navbar-right">
-      <ul class="ul-navbar-container">
-        <li class="li-navbar-container"><a href="index.html">Home</a></li>
-        <li class="li-navbar-container"><a href="product.html">Product</a></li>
-        <li class="li-navbar-container"><a href="desain.html">Design</a></li>
-        <li class="li-navbar-container"><a href="about.html">About Us</a></li>
-      </ul>
-    </div>
-  </div>
+    <audio id="bgMusic" src="src/supershy.mp3" loop></audio>
 
-  <div class="container">
-    <h1>Word Scramble: Informatika 💻</h1>
-    <p>Susun kembali huruf-huruf di bawah ini menjadi istilah informatika yang benar!</p>
-    
-    <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 10px; margin-bottom: 20px;">
-        <h2 id="scrambledWord" style="letter-spacing: 5px; color: #ff00ff; font-size: 32px;">KODIGN</h2>
-        <small id="wordHint" style="color: #aaa; font-style: italic;">Petunjuk: Menulis baris kode program</small>
-    </div>
+    <header>
+        <div class="logo-container">
+            <img src="src/logosman71.png" alt="Logo SMAN 71" class="logo-school">
+            <span class="site-title">QUATTRO BLOOM</span>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="design.html">Design</a></li>
+                <li><a href="product.html" class="active">Product</a></li>
+                <li><a href="about.html">About Us</a></li>
+            </ul>
+        </nav>
+    </header>
 
-    <input type="text" id="userInput" placeholder="Ketik jawabanmu di sini...">
-    <br>
-    <button onclick="checkAnswer()">Periksa Jawaban</button>
-    <button onclick="nextWord()" style="background: #0099ff; color: white;">Kata Lain</button>
-    
-    <div id="result"></div>
-  </div>
+    <main class="container">
+        <div class="card-panel">
+            <h2 class="text-center" style="color: var(--blossom-dark); text-shadow: 2px 2px 0 #000; font-size: 32px;">🌸 BLOOM SCRUMBLE 🌸</h2>
+            
+            <div class="game-box" id="gameArea">
+                <div class="score-board">
+                    <div>Pertanyaan: <span id="wordCount">1</span>/20</div>
+                    <div>Skor Anda: <span id="score">0</span></div>
+                </div>
 
-  <script>
-    // Daftar kata bertema informatika
-    const wordsDatabase = [
-        { correct: "CODING", scrambled: "KODIGN", hint: "Proses menulis instruksi untuk komputer (Bahasa Inggris)." },
-        { correct: "ALGORITMA", scrambled: "AMTIROLGA", hint: "Langkah-langkah logis dan berurutan untuk menyelesaikan masalah." },
-        { correct: "INTERNET", scrambled: "TENRETNI", hint: "Jaringan global yang menghubungkan komputer di seluruh dunia." },
-        { correct: "SOFTWARE", scrambled: "ERAWFTOS", hint: "Perangkat lunak atau aplikasi komputer." },
-        { correct: "HARDWARE", scrambled: "ERAWDRHA", hint: "Komponen fisik penyusun komputer." }
-    ];
+                <div class="scrambled-word" id="scrambledDisplay">LOADING...</div>
+                
+                <div class="hint-box">
+                    💡 <strong>Petunjuk:</strong> <span id="hintDisplay">Menghubungkan komputer global.</span>
+                </div>
 
-    let currentWordIndex = 0;
+                <input type="text" id="userInput" class="game-input" placeholder="Ketik jawabanmu di sini..." autocomplete="off"><br>
+                
+                <button class="ppg-btn" onclick="checkAnswer()">Check Answer! 🚀</button>
+                <p id="feedback" style="margin-top: 15px; font-weight: 700; font-size: 18px;"></p>
+            </div>
 
-    function loadWord() {
-        const currentData = wordsDatabase[currentWordIndex];
-        document.getElementById("scrambledWord").innerText = currentData.scrambled;
-        document.getElementById("wordHint").innerText = `Petunjuk: ${currentData.hint}`;
-        document.getElementById("userInput").value = "";
-        document.getElementById("result").innerText = "";
-        document.getElementById("result").className = "";
-    }
+            <div class="game-box" id="resultArea" style="display: none;">
+                <h3 style="font-size: 28px; color: var(--buttercup-green); text-shadow: 2px 2px 0 #000;">🎉 PERMAINAN SELESAI! 🎉</h3>
+                <p style="font-size: 20px; margin: 20px 0;">Hebat! Skor Akhir Kelulusan Kompetensi Kamu:</p>
+                <div style="font-size: 64px; font-weight: 800; color: var(--blossom-dark); text-shadow: 3px 3px 0 #000; margin-bottom: 25px;" id="finalScore">0</div>
+                <button class="ppg-btn" onclick="resetGame()">Main Lagi 🔄</button>
+            </div>
+        </div>
+    </main>
 
-    function checkAnswer() {
-        const userAnswer = document.getElementById("userInput").value.trim().toUpperCase();
-        const correctAnswer = wordsDatabase[currentWordIndex].correct;
-        const resultDiv = document.getElementById("result");
+    <script>
+        // Musik Latar Autoplay Handler
+        window.addEventListener('click', () => {
+            const audio = document.getElementById('bgMusic');
+            if(audio.paused) { audio.play(); }
+        });
 
-        if (userAnswer === correctAnswer) {
-            resultDiv.innerHTML = "🎉 Benar! Kerja bagus!";
-            resultDiv.className = "correct";
-        } else if (userAnswer === "") {
-            resultDiv.innerHTML = "Isi jawabanmu terlebih dahulu!";
-            resultDiv.className = "";
-        } else {
-            resultDiv.innerHTML = "❌ Salah! Coba tebak lagi ya.";
-            resultDiv.className = "wrong";
+        // Database Game: 20 Istilah Informatika Kelas 10
+        const wordBank = [
+            { word: "ALGORITMA", hint: "Urutan langkah logis penyelesaian masalah matematika/komputasi." },
+            { word: "HARDWARE", hint: "Perangkat keras fisik penyusun sistem komputer." },
+            { word: "SOFTWARE", hint: "Perangkat lunak atau program aplikasi komputer." },
+            { word: "INTERNET", hint: "Jaringan komunikasi global yang menghubungkan milyaran gawai." },
+            { word: "DATA", hint: "Kumpulan fakta mentah yang belum diolah." },
+            { word: "DATABASE", hint: "Tempat penyimpanan data yang terstruktur/terorganisir digital." },
+            { word: "CODING", hint: "Proses menulis instruksi bahasa pemrograman." },
+            { word: "PYTHON", hint: "Salah satu bahasa pemrograman populer bersimbol ular." },
+            { word: "SCRATCH", hint: "Platform pemrograman visual blok yang cocok untuk pemula." },
+            { word: "NETWORK", hint: "Sistem jaringan interkoneksi antar komputer." },
+            { word: "BROWSER", hint: "Software penjelajah web, contoh: Chrome, Firefox." },
+            { word: "SECURITY", hint: "Aspek keamanan perlindungan data dari ancaman siber." },
+            { word: "PROCESSOR", hint: "Otak utama pemroses instruksi pada CPU komputer." },
+            { word: "MEMORY", hint: "Komponen penyimpanan data sementara (RAM) atau permanen." },
+            { word: "SYSTEM", hint: "Kesatuan elemen yang saling berinteraksi mencapai tujuan komputasi." },
+            { word: "DIGITAL", hint: "Representasi data berbasis biner angka 0 dan 1." },
+            { word: "INFORMATIKA", hint: "Nama mata pelajaran teknologi informasi kita saat ini!" },
+            { word: "COMPUTING", hint: "Aktivitas penggunaan teknologi komputer secara teknis." },
+            { word: "BINARY", hint: "Sistem bilangan berbasis dua simbol logika." },
+            { word: "ROBOTIK", hint: "Cabang pemrograman automata alat mekanik pintar otomatis." }
+        ];
+
+        let currentWordIndex = 0;
+        let currentScore = 0;
+        let shuffledBank = [];
+
+        function initGame() {
+            // Mengacak urutan soal saat game dimulai
+            shuffledBank = [...wordBank].sort(() => Math.random() - 0.5);
+            currentWordIndex = 0;
+            currentScore = 0;
+            document.getElementById('gameArea').style.display = 'block';
+            document.getElementById('resultArea').style.display = 'none';
+            loadQuestion();
         }
-    }
 
-    function nextWord() {
-        // Berpindah ke kata berikutnya secara berurutan atau acak
-        currentWordIndex = (currentWordIndex + 1) % wordsDatabase.length;
-        loadWord();
-    }
+        function loadQuestion() {
+            if(currentWordIndex >= 20) {
+                endGame();
+                return;
+            }
+            
+            document.getElementById('wordCount').innerText = currentWordIndex + 1;
+            document.getElementById('score').innerText = currentScore;
+            document.getElementById('userInput').value = "";
+            document.getElementById('feedback').innerText = "";
 
-    // Load kata pertama saat halaman dibuka
-    window.onload = loadWord;
-  </script>
+            let targetWord = shuffledBank[currentWordIndex].word;
+            document.getElementById('hintDisplay').innerText = shuffledBank[currentWordIndex].hint;
+            document.getElementById('scrambledDisplay').innerText = scrambleString(targetWord);
+        }
 
+        function scrambleString(str) {
+            let arr = str.split('');
+            // Pastikan acakan tidak sama persis dengan aslinya
+            while(arr.join('') === str) {
+                arr.sort(() => Math.random() - 0.5);
+            }
+            return arr.join('');
+        }
+
+        function checkAnswer() {
+            let userAns = document.getElementById('userInput').value.toUpperCase().trim();
+            let realAns = shuffledBank[currentWordIndex].word;
+            let feedback = document.getElementById('feedback');
+
+            if(userAns === realAns) {
+                currentScore += 5; // Maksimal skor 100 jika benar semua (20 * 5)
+                feedback.style.color = "green";
+                feedback.innerText = "Benar! Hebat! 🎉";
+            } else {
+                feedback.style.color = "red";
+                feedback.innerText = `Salah! Jawaban yang benar adalah: ${realAns}`;
+            }
+
+            currentWordIndex++;
+            setTimeout(loadQuestion, 1500);
+        }
+
+        function endGame() {
+            document.getElementById('gameArea').style.display = 'none';
+            document.getElementById('resultArea').style.display = 'block';
+            document.getElementById('finalScore').innerText = currentScore;
+        }
+
+        function resetGame() {
+            initGame();
+        }
+
+        // Start game otomatis di awal load
+        window.onload = initGame;
+    </script>
 </body>
 </html>
