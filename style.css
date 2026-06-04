@@ -40,12 +40,15 @@ header {
 .logo-container {
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 15px; /* Jarak antara logo dan tulisan QUATTRO BLOOM */
 }
 
 .logo-school {
-    height: 50px;
+    height: 60px; /* Ukuran diperbesar sedikit */
+    width: auto;
     object-fit: contain;
+    /* Efek garis tebal khas Powerpuff Girls */
+    filter: drop-shadow(2px 2px 0px #000); 
 }
 
 .site-title {
